@@ -1,9 +1,11 @@
 package Learning.demo_Spring_Security.entity;
 
+import Learning.demo_Spring_Security.Dto.TodoDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -23,7 +25,7 @@ public class Todo {
 
     private LocalDateTime updatedAt;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "category_id",
             nullable = false,
@@ -32,5 +34,27 @@ public class Todo {
                     name = "todo_category_fk"
             )
     )
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
+
+    public TodoDto getDto() {
+        TodoDto todoDto = new TodoDto();
+        todoDto.setId(getId());
+        todoDto.setTitle(getTitle());
+        todoDto.setDescription(getDescription());
+        todoDto.setCompleted(isCompleted());
+        todoDto.setCreatedAt(LocalDateTime.now());
+        todoDto.setUpdatedAt(getUpdatedAt());
+        if (!categories.isEmpty()) {
+            // Get the first category in the set
+            Category category = categories.iterator().next();
+            todoDto.setCategoryId(category.getId());
+            todoDto.setCategoryName(category.getName());
+        } else {
+            todoDto.setCategoryId(null); // or a default value
+            todoDto.setCategoryName(null); // or a default value
+        }
+
+
+        return todoDto;
+    }
 }
