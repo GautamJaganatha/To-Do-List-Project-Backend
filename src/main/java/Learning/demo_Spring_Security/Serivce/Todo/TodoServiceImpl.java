@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,4 +47,13 @@ public class TodoServiceImpl implements TodoService{
 
         return todoRepository.save(todo).getDto();
     }
+
+
+    public List<TodoDto> getAllTodo(){
+        List<Todo> todoList = todoRepository.findAll();
+
+        return todoList.stream().map(Todo::getDto).collect(Collectors.toList());
+    }
+
+
 }
